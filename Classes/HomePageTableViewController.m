@@ -16,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) NSMutableData *receivedData;
 @property (strong, nonatomic) NSMutableArray *allRecipes;
+@property (strong, nonatomic) NSMutableArray *ingredientsList;
 
 @end
 
@@ -25,6 +26,7 @@
     [super viewDidLoad];
     
     self.allRecipes = [[NSMutableArray alloc]init];
+    self.ingredientsList = [[NSMutableArray alloc]init];
     
     NSLog(@"inside view did load");
     
@@ -34,29 +36,101 @@
     // self.clearsSelectionOnViewWillAppear = NO;
     
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+     self.navigationItem.leftBarButtonItem = self.editButtonItem;
+}
+- (IBAction)addIngredient:(id)sender {
+    
+    UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Add an ingredient" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Add", nil];
+    alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+    [alert show];
+}
+
+- (void)alertView:(UIAlertView *)alertView
+clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 1){
+        NSLog(@"ADDING! %@", [[alertView textFieldAtIndex:0]text]);
+        [self.ingredientsList addObject:[[alertView textFieldAtIndex:0]text]];
+        [self.tableView reloadData];
+    }
 }
 
 -(void)searchBarCancelButtonClicked:(UISearchBar *)searchBar{
     NSLog(@"Cancel");
+    
+    [searchBar setShowsCancelButton:NO animated:YES];
+    [searchBar resignFirstResponder];
 }
 
 
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     NSLog(@"GO %@", searchBar.text);
-    [self callRecipesAPI];
+    [searchBar resignFirstResponder];
+    [self callRecipesAPIByName];
     
 }
 
--(void)callRecipesAPI{
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
+{
 
     
-    NSURL *url = [NSURL URLWithString:@"http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-any=chicken%2Crice"];
+    [searchBar setShowsCancelButton:YES animated:YES];
+}
+
+
+-(void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+    [searchBar setShowsCancelButton:NO animated:YES];
+}
+
+-(void)callRecipesAPIByName{
+    NSMutableString *urlString = [[NSMutableString alloc]init];
+    
+    NSString *api = @"http://api.pearson.com:80/kitchen-manager/v1/recipes?name-contains=";
+    
+    [urlString appendString:api];
+    
+    [urlString appendString:[self.searchBar text]];
+    [self callAPIWithURL:urlString];
+    
+    
+}
+
+-(void)callRecipesAPIByIngredient{
+
+    
+    //NSURL *url = [NSURL URLWithString:@"http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-any=chicken%2Crice"];
+    
+    NSMutableString *urlString = [[NSMutableString alloc]init];
+    
+    NSString *api = @"http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-any=";
+    
+    [urlString appendString:api];
+    
+   
+    
+    for (int i=0; i< [self.ingredientsList count]; i++){
+        NSString* ing =[self.ingredientsList objectAtIndex:i];
+     
+        [urlString appendString:ing];
+        if (i < [self.ingredientsList count]-1){
+            [urlString appendString:@"%2C"];
+        }
+        
+    }
+    
+    NSLog(@"URL STRING IS: %@", urlString);
+    
+    [self callAPIWithURL:urlString];
+    
+}
+
+- (void) callAPIWithURL: (NSString *)urlString{
+    NSURL *url = [NSURL URLWithString:urlString];
+    
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
     [request setHTTPShouldHandleCookies:NO];
     [request setValue:@"Agent name goes here" forHTTPHeaderField:@"User-Agent"];
     [NSURLConnection connectionWithRequest:request delegate:self];
-    
 }
 
 #pragma mark NSURLConnection Delegate Methods
@@ -87,7 +161,7 @@
     // The request is complete and data has been received
      NSLog(@"in 4");
     // You can parse the stuff in your instance variable now
-    NSString *response = [[NSString alloc] initWithData:self.receivedData encoding:NSASCIIStringEncoding];
+
     //NSLog(@"response is: %@", response);
     
     NSError *error = nil;
@@ -195,16 +269,35 @@
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-#warning Potentially incomplete method implementation.
+
     // Return the number of sections.
-    return 0;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-#warning Incomplete method implementation.
     // Return the number of rows in the section.
-    return 0;
+    if (section == 0){
+        
+    return [self.ingredientsList count];
+    }
+    if (section == 1) {
+        return 1;
+    }else{
+        return 0;
+    }
+    
 }
+
+- (NSString *)tableView:(UITableView *)tableView
+titleForHeaderInSection:(NSInteger)section
+{
+    if (section == 0){
+        return @"Ingredients";
+    }else{
+        return @"Ready to go?";
+    }
+}
+
 
 
 #pragma mark - UISearchDisplayController Delegate Methods
@@ -268,35 +361,75 @@
 }
 
 
-/*
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:<#@"reuseIdentifier"#> forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"IngredientCell" forIndexPath:indexPath];
     
     // Configure the cell...
+    if (indexPath.section == 1){
+        
+        NSString *search = @"Search!";
+        cell.textLabel.text = search;
+        [cell.textLabel setTextAlignment:NSTextAlignmentCenter];
+        [cell.textLabel setTextColor:[UIColor blueColor]];
+    }
+    
+    if (indexPath.section == 0){
+        cell.textLabel.text = [self.ingredientsList objectAtIndex:[indexPath row]];
+        
+        [cell.textLabel setTextColor:[UIColor blackColor]];
+        [cell.textLabel setTextAlignment:NSTextAlignmentLeft];
+    }
+    
+
+    
     
     return cell;
 }
-*/
 
-/*
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (indexPath.section == 1){
+        
+        if ([self.ingredientsList count] > 0){
+            [self callRecipesAPIByIngredient];
+        }else{
+            UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"No Ingredients!" message:@"Please add some ingredients before you search!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
+            alert.alertViewStyle = UIAlertViewStyleDefault;
+            [alert show];
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        }
+        
+        
+        
+    }
+    
+}
+
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
+    
+    if (indexPath.section == 1) return NO;
+    
     return YES;
 }
-*/
 
-/*
+
+
 // Override to support editing the table view.
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Delete the row from the data source
+        [self.ingredientsList removeObjectAtIndex:indexPath.row];
+        
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
     }   
 }
-*/
+
 
 /*
 // Override to support rearranging the table view.

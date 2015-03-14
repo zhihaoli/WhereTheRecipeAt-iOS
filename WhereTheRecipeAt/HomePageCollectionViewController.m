@@ -89,8 +89,11 @@ static NSString * const reuseIdentifier = @"RecipeCell";
     UILabel *recipeLabel = (UILabel *)[cell viewWithTag:2];
     
     
-    
-    recipeImage.image = recipe.imageThumb;
+    if (recipe.imageThumb == nil){
+        recipeImage.image = [UIImage imageNamed:@"noImg"];
+    }else{
+        recipeImage.image = recipe.imageThumb;
+    }
     
     recipeLabel.text = recipe.name;
     
