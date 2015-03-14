@@ -88,7 +88,36 @@
      NSLog(@"in 4");
     // You can parse the stuff in your instance variable now
     NSString *response = [[NSString alloc] initWithData:self.receivedData encoding:NSASCIIStringEncoding];
-    NSLog(@"response is: %@", response);
+    //NSLog(@"response is: %@", response);
+    
+    NSError *error = nil;
+    id object = [NSJSONSerialization
+                 JSONObjectWithData:self.receivedData
+                 options:0
+                 error:&error];
+    
+    NSDictionary *results = object;
+    
+    for (id key in [results allKeys]) {
+        
+        
+        if ([key isEqualToString:@"results"]){
+            NSArray *array = [results objectForKey:key];
+            
+            
+            NSDictionary *recipe = [array objectAtIndex:0];
+            for (id rKey in [recipe allKeys] ) {
+                
+                
+                NSLog(@"key: %@, value: %@", rKey, [recipe objectForKey:rKey]);
+            }
+            
+        }else{
+            NSLog(@"key: %@, value: %@", key, [results objectForKey:key]);
+        }
+    }
+    
+   // NSLog(@"dictionary results: %@", results);
     
 }
 
