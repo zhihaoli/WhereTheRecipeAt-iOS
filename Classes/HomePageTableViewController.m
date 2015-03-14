@@ -7,12 +7,15 @@
 //
 
 #import "HomePageTableViewController.h"
+#import "RecipeObject.h"
+#import "HomePageCollectionViewController.h"
 
 @interface HomePageTableViewController ()
 
 
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (strong, nonatomic) NSMutableData *receivedData;
+@property (strong, nonatomic) NSMutableArray *allRecipes;
 
 @end
 
@@ -20,6 +23,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.allRecipes = [[NSMutableArray alloc]init];
     
     NSLog(@"inside view did load");
     
@@ -45,11 +50,6 @@
 
 -(void)callRecipesAPI{
 
-//    // Create the request.
-//    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-any=chicken%2Crice"]];
-//    
-//    // Create url connection and fire request
-//    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     
     NSURL *url = [NSURL URLWithString:@"http://api.pearson.com:80/kitchen-manager/v1/recipes?ingredients-any=chicken%2Crice"];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
@@ -97,28 +97,87 @@
                  error:&error];
     
     NSDictionary *results = object;
+    [self parseRecipeData:results];
+    
+    
+}
+
+- (void) parseRecipeData: (NSDictionary *) results{
     
     for (id key in [results allKeys]) {
         
         
         if ([key isEqualToString:@"results"]){
-            NSArray *array = [results objectForKey:key];
+            NSArray *resultsArray = [results objectForKey:key];
             
-            
-            NSDictionary *recipe = [array objectAtIndex:0];
-            for (id rKey in [recipe allKeys] ) {
+            for (NSDictionary * recipeDict in resultsArray){
+                
+                 RecipeObject *recipe = [[RecipeObject alloc]init];
+                for (id rKey in [recipeDict allKeys] ) {
+
+                    if ([rKey isEqualToString:@"ingredients"]){
+                        recipe.ingredients = [recipeDict objectForKey:rKey];
+                    }
+                    
+                    if ([rKey isEqualToString:@"id"]){
+                        recipe.recipeId = [recipeDict objectForKey:rKey];
+                    }
+                    
+                    if ([rKey isEqualToString:@"cooking_method"]){
+                        recipe.cookingMethod = [recipeDict objectForKey:rKey];
+                    }
+                    
+                    if ([rKey isEqualToString:@"image"]){
+                        recipe.imageFullURL = [recipeDict objectForKey:rKey];
+                        
+                        NSData * imageData = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: recipe.imageFullURL]];
+                        recipe.imageFull = [UIImage imageWithData: imageData];
+                    }
+                    
+                    if ([rKey isEqualToString:@"thumb"]){
+                        recipe.imageThumbURL = [recipeDict objectForKey:rKey];
+                        
+                        NSData * imageData = [[NSData alloc] initWithContentsOfURL: [NSURL URLWithString: recipe.imageThumbURL]];
+                        
+                        recipe.imageThumb = [UIImage imageWithData:imageData];
+                    }
+                    
+                    if ([rKey isEqualToString:@"cusine"]){
+                        recipe.cuisine = [recipeDict objectForKey:rKey];
+                    }
+                    
+                    if ([rKey isEqualToString:@"url"]){
+                        recipe.recipeURL = [recipeDict objectForKey:rKey];
+                    }
+                    
+                    if ([rKey isEqualToString:@"name"]){
+                        recipe.name = [recipeDict objectForKey:rKey];
+                    }
+                    
+                    
+                    
+
+                }
+                
+                [self.allRecipes addObject:recipe];
+                
+                NSLog(@"recipe is: %@ and requires ingredients: %@", recipe.recipeId, recipe.ingredients);
                 
                 
-                NSLog(@"key: %@, value: %@", rKey, [recipe objectForKey:rKey]);
             }
+            
+            
+            
+            
+            
             
         }else{
             NSLog(@"key: %@, value: %@", key, [results objectForKey:key]);
         }
     }
     
-   // NSLog(@"dictionary results: %@", results);
-    
+    [self performSegueWithIdentifier:@"goToCollection" sender:nil];
+
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
@@ -188,6 +247,25 @@
     return NO;
 }
 
+
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([segue.identifier isEqualToString:@"goToCollection"]){
+        NSLog(@"ABOUT TO SEGUE OMG");
+        
+        HomePageCollectionViewController *collectionView = (HomePageCollectionViewController *)[[segue destinationViewController] topViewController];
+        
+        
+        RecipeObject *obj = [self.allRecipes objectAtIndex:0];
+        NSLog(@"all recipes is: %@", obj.name);
+        
+        
+        collectionView.allResults = self.allRecipes;
+        
+        
+    }
+}
 
 
 /*

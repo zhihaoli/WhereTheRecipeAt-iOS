@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="14D72i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="e6Q-WH-2f5">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7525" systemVersion="14D72i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="e6Q-WH-2f5">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7516"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Navigation Controller-->
@@ -21,6 +22,65 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Jh7-g2-ABi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="241" y="363"/>
+        </scene>
+        <!--Recipes-->
+        <scene sceneID="rjo-Xs-Apd">
+            <objects>
+                <collectionViewController id="1ci-Bk-WEX" customClass="HomePageCollectionViewController" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="AxN-XC-0Rd">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="NHU-VL-afq">
+                            <size key="itemSize" width="241" height="237"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RecipeCell" id="vv3-rk-AcS" customClass="RecipeCollectionViewCell">
+                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                    <rect key="frame" x="0.0" y="0.0" width="241" height="237"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" tag="1" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dmP-0l-dqS">
+                                            <rect key="frame" x="0.0" y="43" width="241" height="194"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" tag="2" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IG7-Zr-S3T">
+                                            <rect key="frame" x="0.0" y="0.0" width="241" height="45"/>
+                                            <constraints>
+                                                <constraint firstAttribute="height" constant="45" id="JDp-TN-FfC"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </view>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="dmP-0l-dqS" secondAttribute="trailing" id="5Lf-p6-0fz"/>
+                                    <constraint firstItem="dmP-0l-dqS" firstAttribute="top" secondItem="vv3-rk-AcS" secondAttribute="topMargin" constant="35" id="AG9-M7-TAm"/>
+                                    <constraint firstItem="IG7-Zr-S3T" firstAttribute="trailing" secondItem="dmP-0l-dqS" secondAttribute="trailing" id="Dey-Xs-Cfy"/>
+                                    <constraint firstAttribute="bottom" secondItem="dmP-0l-dqS" secondAttribute="bottom" id="N4P-wQ-hh9"/>
+                                    <constraint firstItem="IG7-Zr-S3T" firstAttribute="top" secondItem="vv3-rk-AcS" secondAttribute="top" id="PXL-P9-D5d"/>
+                                    <constraint firstItem="dmP-0l-dqS" firstAttribute="leading" secondItem="IG7-Zr-S3T" secondAttribute="leading" id="TGQ-bq-Rt5"/>
+                                    <constraint firstItem="IG7-Zr-S3T" firstAttribute="leading" secondItem="vv3-rk-AcS" secondAttribute="leading" id="WuM-6F-vMB"/>
+                                </constraints>
+                                <size key="customSize" width="241" height="237"/>
+                            </collectionViewCell>
+                        </cells>
+                        <connections>
+                            <outlet property="dataSource" destination="1ci-Bk-WEX" id="fme-mC-fPf"/>
+                            <outlet property="delegate" destination="1ci-Bk-WEX" id="FtN-9V-5rp"/>
+                        </connections>
+                    </collectionView>
+                    <navigationItem key="navigationItem" title="Recipes" id="kzh-fN-ADr"/>
+                </collectionViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6YH-KC-qqc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1680" y="-338"/>
         </scene>
         <!--HomePage-->
         <scene sceneID="wM6-5U-yGx">
@@ -55,6 +115,7 @@
                     <connections>
                         <outlet property="searchBar" destination="eoV-mm-SBv" id="Yj0-4U-pc0"/>
                         <outlet property="searchDisplayController" destination="dsP-hR-6y9" id="nph-ra-aFH"/>
+                        <segue destination="yOJ-D6-dxY" kind="show" identifier="goToCollection" id="hnA-3b-FRU"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hlN-C2-Of6" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -68,7 +129,25 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="1007" y="363"/>
+            <point key="canvasLocation" x="975" y="491"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Mvc-gn-lNY">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="yOJ-D6-dxY" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="5ze-g2-zpM">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="1ci-Bk-WEX" kind="relationship" relationship="rootViewController" id="OHi-EN-XhB"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="R1n-G3-KmK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="868" y="-338"/>
         </scene>
     </scenes>
 </document>
