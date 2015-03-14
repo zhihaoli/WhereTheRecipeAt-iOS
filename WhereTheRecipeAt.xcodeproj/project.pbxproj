@@ -14,6 +14,7 @@
 		2A9FA2281AB3F50A005F191A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A9FA2271AB3F50A005F191A /* Images.xcassets */; };
 		2A9FA22B1AB3F50A005F191A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2A9FA2291AB3F50A005F191A /* LaunchScreen.xib */; };
 		2A9FA2371AB3F50A005F191A /* WhereTheRecipeAtTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A9FA2361AB3F50A005F191A /* WhereTheRecipeAtTests.m */; };
+		2AAD22581AB401C0001DAB82 /* HomePageTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2AAD22571AB401C0001DAB82 /* HomePageTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +41,8 @@
 		2A9FA2301AB3F50A005F191A /* WhereTheRecipeAtTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhereTheRecipeAtTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A9FA2351AB3F50A005F191A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2A9FA2361AB3F50A005F191A /* WhereTheRecipeAtTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WhereTheRecipeAtTests.m; sourceTree = "<group>"; };
+		2AAD22561AB401C0001DAB82 /* HomePageTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HomePageTableViewController.h; path = ../Classes/HomePageTableViewController.h; sourceTree = "<group>"; };
+		2AAD22571AB401C0001DAB82 /* HomePageTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HomePageTableViewController.m; path = ../Classes/HomePageTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,8 @@
 		2A9FA2191AB3F50A005F191A /* WhereTheRecipeAt */ = {
 			isa = PBXGroup;
 			children = (
+				2AAD22561AB401C0001DAB82 /* HomePageTableViewController.h */,
+				2AAD22571AB401C0001DAB82 /* HomePageTableViewController.m */,
 				2A9FA21E1AB3F50A005F191A /* AppDelegate.h */,
 				2A9FA21F1AB3F50A005F191A /* AppDelegate.m */,
 				2A9FA2211AB3F50A005F191A /* ViewController.h */,
@@ -220,6 +225,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A9FA2231AB3F50A005F191A /* ViewController.m in Sources */,
+				2AAD22581AB401C0001DAB82 /* HomePageTableViewController.m in Sources */,
 				2A9FA2201AB3F50A005F191A /* AppDelegate.m in Sources */,
 				2A9FA21D1AB3F50A005F191A /* main.m in Sources */,
 			);
@@ -412,6 +418,7 @@
 				2A9FA23C1AB3F50A005F191A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2A9FA23D1AB3F50A005F191A /* Build configuration list for PBXNativeTarget "WhereTheRecipeAtTests" */ = {
 			isa = XCConfigurationList;
@@ -420,6 +427,7 @@
 				2A9FA23F1AB3F50A005F191A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
