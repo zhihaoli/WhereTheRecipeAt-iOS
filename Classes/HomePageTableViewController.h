@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface HomePageTableViewController : UITableViewController <UISearchDisplayDelegate, UISearchBarDelegate, NSURLConnectionDataDelegate, NSURLConnectionDelegate, UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface HomePageTableViewController : UITableViewController <UISearchDisplayDelegate, UISearchBarDelegate, NSURLConnectionDataDelegate, NSURLConnectionDelegate, UIAlertViewDelegate, UITableViewDataSource, UITableViewDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @end

@@ -9,6 +9,8 @@
 #import "HomePageTableViewController.h"
 #import "RecipeObject.h"
 #import "HomePageCollectionViewController.h"
+#import <AFNetworking/AFNetworking.h>
+#import <Parse/Parse.h>
 
 @interface HomePageTableViewController ()
 
@@ -18,18 +20,28 @@
 @property (strong, nonatomic) NSMutableArray *allRecipes;
 @property (strong, nonatomic) NSMutableArray *ingredientsList;
 
+
 @end
 
 @implementation HomePageTableViewController
 
+
+
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+
     self.allRecipes = [[NSMutableArray alloc]init];
     self.ingredientsList = [[NSMutableArray alloc]init];
     
     NSLog(@"inside view did load");
     
+    //[self callAPIWithURL:@"https://opendata.socrata.com/api/views/u5i2-8j3f/rows.json?accessType=DOWNLOAD"];
+    
+//    PFObject *testObject = [PFObject objectWithClassName:@"TestObject"];
+//    testObject[@"foo"] = @"bar";
+//    [testObject saveInBackground];
 
     
     // Uncomment the following line to preserve selection between presentations.
@@ -38,6 +50,49 @@
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
      self.navigationItem.leftBarButtonItem = self.editButtonItem;
 }
+
+-(void) parseFoodDictionary:(NSDictionary *) results{
+    
+    NSMutableArray *alphabetArray = [[NSMutableArray alloc]init];
+    NSMutableArray *theAlphabet = [[NSMutableArray alloc]init];
+    
+    for (id key in [results allKeys]) {
+        
+        
+        
+        
+        if ([key isEqualToString:@"data"]){
+            NSArray *dataArray = [results objectForKey:key];
+            
+            NSMutableArray *letterArray = [[NSMutableArray alloc]init];
+            
+            NSString *prevFirstLetter = @"";
+            
+            for (NSArray * data in dataArray){
+                
+                NSString *food = [data objectAtIndex:8];
+                food = [food lowercaseString];
+                NSString *firstLetter = [food substringToIndex:1];
+                
+                
+                if (![firstLetter isEqualToString:prevFirstLetter]){
+                    [theAlphabet addObject:firstLetter];
+                    prevFirstLetter = firstLetter;
+                    [alphabetArray addObject:letterArray];
+                    letterArray = [[NSMutableArray alloc]init];
+                }
+                [letterArray addObject:food];
+                
+            }
+            
+        }
+    }
+    NSLog(@"full data is: %@", alphabetArray);
+    
+    
+ 
+}
+
 - (IBAction)addIngredient:(id)sender {
     
     UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"Add an ingredient" message:nil delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Add", nil];
@@ -171,10 +226,14 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
                  error:&error];
     
     NSDictionary *results = object;
-    [self parseRecipeData:results];
     
+
+    [self parseRecipeData:results];
+    //[self parseFoodDictionary:results];
     
 }
+
+
 
 - (void) parseRecipeData: (NSDictionary *) results{
     
@@ -254,6 +313,49 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 
 }
 
+
+-(void) parseImageRecogData: (NSDictionary *) recogData{
+    for (id key in [recogData allKeys]) {
+        if ([key isEqualToString:@"tags"]){
+            NSMutableArray *tagsArray = [[NSMutableArray alloc]init];
+            
+            tagsArray = [recogData objectForKey:key];
+            
+            for (NSDictionary * tagDict in tagsArray){
+                
+                
+                
+                
+            }
+        }
+    }
+    
+}
+
+
+-(BOOL) checkIfTagIsAFood:(NSString *) tag{
+    
+    
+    
+    NSMutableString *urlString = [[NSMutableString alloc]init];
+    
+    NSString *foodAPI = @"https://opendata.socrata.com/resource/u5i2-8j3f.json?abalone=";
+    //NSString *appToken = @"$$app_token=P8i2HP82RfutStn3De7rOp6t7";
+    
+    [urlString appendString:foodAPI];
+    [urlString appendString:tag];
+    
+    [self callAPIWithURL:urlString];
+    
+    //[urlString appendString:appToken];
+    
+    
+    
+    return NO;
+    
+    
+}
+
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
     // The request has failed for some reason!
     // Check the error var
@@ -271,7 +373,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
     // Return the number of sections.
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -280,7 +382,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
         
     return [self.ingredientsList count];
     }
-    if (section == 1) {
+    if (section == 1 || section == 2) {
         return 1;
     }else{
         return 0;
@@ -293,51 +395,13 @@ titleForHeaderInSection:(NSInteger)section
 {
     if (section == 0){
         return @"Ingredients";
-    }else{
-        return @"Ready to go?";
     }
-}
-
-
-
-#pragma mark - UISearchDisplayController Delegate Methods
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
-{
-    NSLog(@"RELOAD FOR searchString is: %@", searchString);
-   
-//    NSString *scope;
-//    
-//    NSInteger selectedScopeButtonIndex = [self.searchDisplayController.searchBar selectedScopeButtonIndex];
-//    if (selectedScopeButtonIndex > 0)
-//    {
-//        scope = [[APLProduct deviceTypeNames] objectAtIndex:(selectedScopeButtonIndex - 1)];
-//    }
-//    
-//    [self updateFilteredContentForProductName:searchString type:scope];
     
-    // Return YES to cause the search result table view to be reloaded.
-    return NO;
-}
-
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
-{
-    NSString *searchString = [self.searchDisplayController.searchBar text];
-    NSLog(@"RELOAD FOR SEARCHSCOPE is: %@", searchString);
-    
-//    NSString *searchString = [self.searchDisplayController.searchBar text];
-//    NSString *scope;
-//    
-//    if (searchOption > 0)
-//    {
-//        scope = [[APLProduct deviceTypeNames] objectAtIndex:(searchOption - 1)];
-//    }
-//    
-//    [self updateFilteredContentForProductName:searchString type:scope];
-    
-    // Return YES to cause the search result table view to be reloaded.
-    return NO;
+    if (section == 1){
+        return @"Search recipes by Ingredients!";
+    }else{
+        return @"Scan your Ingredients!";
+    }
 }
 
 
@@ -374,6 +438,14 @@ titleForHeaderInSection:(NSInteger)section
         [cell.textLabel setTextColor:[UIColor blueColor]];
     }
     
+    if (indexPath.section == 2){
+        
+        NSString *search = @"Scan Your Food!";
+        cell.textLabel.text = search;
+        [cell.textLabel setTextAlignment:NSTextAlignmentCenter];
+        [cell.textLabel setTextColor:[UIColor blueColor]];
+    }
+    
     if (indexPath.section == 0){
         cell.textLabel.text = [self.ingredientsList objectAtIndex:[indexPath row]];
         
@@ -405,15 +477,84 @@ titleForHeaderInSection:(NSInteger)section
         
     }
     
+    if (indexPath.section == 2){
+        [self switchToCamera]; 
+    }
+    
 }
+
+- (void) switchToCamera{
+    UIImagePickerController *camerapicker = [[UIImagePickerController alloc]init];
+    camerapicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    camerapicker.delegate = self;
+    [self presentViewController:camerapicker animated:YES completion:nil];
+}
+
+
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+ 
+    UIImage* cameraImage = [info valueForKey:@"UIImagePickerControllerOriginalImage"];
+    
+    // NSURL *strImageURL = [info valueForKey:UIImagePickerControllerReferenceURL];
+    
+    [self storeImageToParse:cameraImage];
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+    return;
+}
+
+-(void) storeImageToParse:(UIImage *) image{
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+    PFObject *imageStore = [PFObject objectWithClassName:@"ImagesForRecognition"];
+    imageStore[@"cameraImage"] = [PFFile fileWithData:imageData];
+    [imageStore saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+        PFQuery *queryImage = [PFQuery queryWithClassName:@"ImagesForRecognition"];
+        [queryImage orderByDescending:@"createdAt"];
+        PFObject *storedImage = [queryImage getFirstObject];
+        
+        PFFile *imageFile = storedImage[@"cameraImage"];
+        
+        AFHTTPRequestOperationManager *taggingManager = [AFHTTPRequestOperationManager manager];
+        [taggingManager setRequestSerializer:[AFHTTPRequestSerializer serializer]];
+        [taggingManager.requestSerializer setAuthorizationHeaderFieldWithUsername: @"acc_1adda715b59e697" password: @"c8e39f2f43b7097205c013e23034eef3"];
+        [taggingManager GET:@"http://api.imagga.com/v1/tagging" parameters:@{@"url":imageFile.url}
+                    success:^(AFHTTPRequestOperation *taggingOperation, id taggingResponseObject) {
+                        NSLog(@"Tagging Response: %@", taggingResponseObject);
+                        
+                        
+                        NSError *error = nil;
+                        id object = [NSJSONSerialization
+                                     JSONObjectWithData:taggingResponseObject
+                                     options:0
+                                     error:&error];
+                        
+                        NSDictionary *recogData = object;
+                        
+                        [self parseImageRecogData:recogData];
+                        
+                        
+                        
+                        
+                    } failure:^(AFHTTPRequestOperation *taggingOperation, NSError *taggingError) {
+                        NSLog(@"Tagging Error: %@", taggingError);
+                    }];
+        
+        }
+    ];
+
+}
+
+
 
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     // Return NO if you do not want the specified item to be editable.
     
-    if (indexPath.section == 1) return NO;
+    if (indexPath.section == 0) return YES;
     
-    return YES;
+    return NO;
 }
 
 
