@@ -102,6 +102,8 @@
 
 - (void)alertView:(UIAlertView *)alertView
 clickedButtonAtIndex:(NSInteger)buttonIndex{
+    
+    
     if (buttonIndex == 1){
         NSLog(@"ADDING! %@", [[alertView textFieldAtIndex:0]text]);
         [self.ingredientsList addObject:[[alertView textFieldAtIndex:0]text]];
@@ -315,20 +317,81 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 
 
 -(void) parseImageRecogData: (NSDictionary *) recogData{
+    
+    BOOL found1Tag = NO;
+    BOOL found2Tags = NO;
+          NSMutableArray *goodTags = [[NSMutableArray alloc]init];
+    NSString *bestTag;
+    NSString *secondBestTag;
     for (id key in [recogData allKeys]) {
-        if ([key isEqualToString:@"tags"]){
-            NSMutableArray *tagsArray = [[NSMutableArray alloc]init];
+        if ([key isEqualToString:@"results"]){
             
-            tagsArray = [recogData objectForKey:key];
+            NSMutableArray *firstLevelArr = [[NSMutableArray alloc]init];
+            firstLevelArr = [recogData objectForKey:key];
+        
             
-            for (NSDictionary * tagDict in tagsArray){
+            for (id tKey in [[firstLevelArr objectAtIndex:0] allKeys]){
+                
+            
+                if ([tKey isEqualToString:@"tags"] ){
+                    NSMutableArray *tagsArray = [[NSMutableArray alloc]init];
+            
+                    tagsArray = [[firstLevelArr objectAtIndex:0] objectForKey:tKey];
+              
+                    
+                    for (NSDictionary * tagDict in tagsArray){
+                
+                        int confidence = (int)[tagDict objectForKey:@"confidence"];
+                
+                        if ( confidence > 30){
+                            if (![self checkIfTagIsAFood:[tagDict objectForKey:@"tag"]]){
+                        
+                                NSLog(@"%@ is a bad tag!", [tagDict objectForKey:@"tag"]);
+                        
+                            }else{
+                                [goodTags addObject:[tagDict objectForKey:@"tag"]];
+                            }
+                }
+                
                 
                 
                 
                 
             }
+                    if ([goodTags count] > 1){
+                        secondBestTag = [goodTags objectAtIndex:1];
+                    }
+                    
+                    if ([goodTags count] > 0){
+                        bestTag = [goodTags objectAtIndex:0];
+                        found1Tag = YES;
+                        found2Tags = YES;
+                    }else{
+                        found1Tag = NO;
+                        found2Tags = NO;
+                        bestTag = @"... actually I'm not sure what that was, maybe enter it manually?";
+                    }
+            
+        }}
         }
     }
+    
+    
+    NSLog(@"the best tag is %@", bestTag);
+    NSLog(@"top tags: %@", goodTags);
+    
+    if (found1Tag){
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"YOU JUST TOOK A PICTURE OF A %@", bestTag] message:@"" delegate:self cancelButtonTitle:@"Nope" otherButtonTitles:@"Yup!", nil];
+        [alert show];
+    }else if (found2Tags){
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"YOU JUST TOOK A PICTURE OF A %@, OR WAS IT %@?", bestTag, secondBestTag] message:@"" delegate:self cancelButtonTitle:@"Neither" otherButtonTitles:bestTag,secondBestTag , nil];
+        [alert show];
+    }else{
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Sorry, I couldn't figure out what that was; go easy on me, I've only been doing this for like a day"] message:nil delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
+        [alert show];
+    }
+    
+   
     
 }
 
@@ -336,22 +399,23 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 -(BOOL) checkIfTagIsAFood:(NSString *) tag{
     
     
+    NSString *firstLetterTag = [tag substringToIndex:1];
     
-    NSMutableString *urlString = [[NSMutableString alloc]init];
+    PFQuery *query = [PFQuery queryWithClassName:[NSString stringWithFormat:@"FoodDictionary_%@", firstLetterTag]];
+    [query whereKey:@"foodName" equalTo:tag];
+    NSArray *result = [query findObjects];
     
-    NSString *foodAPI = @"https://opendata.socrata.com/resource/u5i2-8j3f.json?abalone=";
-    //NSString *appToken = @"$$app_token=P8i2HP82RfutStn3De7rOp6t7";
+    NSLog(@"querying tag: %@", tag);
     
-    [urlString appendString:foodAPI];
-    [urlString appendString:tag];
+    if ([result count] == 0){
+        NSLog(@"NO!");
+        return NO;
+    }else{
+        NSLog(@"YES!");
+        return YES;
+    }
     
-    [self callAPIWithURL:urlString];
-    
-    //[urlString appendString:appToken];
-    
-    
-    
-    return NO;
+
     
     
 }
@@ -506,7 +570,7 @@ titleForHeaderInSection:(NSInteger)section
 
 -(void) storeImageToParse:(UIImage *) image{
     
-    NSData *imageData = UIImageJPEGRepresentation(image, 0.5);
+    NSData *imageData = UIImageJPEGRepresentation(image, 0.1);
     PFObject *imageStore = [PFObject objectWithClassName:@"ImagesForRecognition"];
     imageStore[@"cameraImage"] = [PFFile fileWithData:imageData];
     [imageStore saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
@@ -524,13 +588,13 @@ titleForHeaderInSection:(NSInteger)section
                         NSLog(@"Tagging Response: %@", taggingResponseObject);
                         
                         
-                        NSError *error = nil;
-                        id object = [NSJSONSerialization
-                                     JSONObjectWithData:taggingResponseObject
-                                     options:0
-                                     error:&error];
+//                        NSError *error = nil;
+//                        id object = [NSJSONSerialization
+//                                     JSONObjectWithData:taggingResponseObject
+//                                     options:0
+//                                     error:&error];
                         
-                        NSDictionary *recogData = object;
+                        NSDictionary *recogData = taggingResponseObject;
                         
                         [self parseImageRecogData:recogData];
                         
