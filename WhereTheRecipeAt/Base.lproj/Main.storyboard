@@ -101,6 +101,7 @@
                                 <rect key="frame" x="69" y="99" width="463" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="PMa-Hg-CtZ"/>
+                                    <constraint firstAttribute="width" constant="463" id="oTp-3l-GiB"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>

@@ -27,6 +27,7 @@
 @implementation HomePageTableViewController
 
 UIAlertView * scanAlert;
+UIAlertView *searchAlert;
 
 
 - (void)viewDidLoad {
@@ -127,7 +128,15 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     NSLog(@"GO %@", searchBar.text);
     [searchBar resignFirstResponder];
+    
+    
     [self callRecipesAPIByName];
+    
+    
+    searchAlert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Retreiving Recipes!"] message:@"Busy running some super crazy awesome algorithms, please be patient :)" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+    [searchAlert show];
+    
+    
     
 }
 
@@ -180,6 +189,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
         
     }
     
+    [urlString appendString:@"&limit=5"];
     NSLog(@"URL STRING IS: %@", urlString);
     
     [self callAPIWithURL:urlString];
@@ -236,6 +246,10 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
     
 
     [self parseRecipeData:results];
+    
+    searchAlert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Retrieving Recipes"] message:@"Busy running some super crazy awesome algorithms, please be patient :)" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+    [searchAlert show];
+    
     //[self parseFoodDictionary:results];
     
 }
@@ -316,6 +330,8 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
         }
     }
     
+    [searchAlert dismissWithClickedButtonIndex:0 animated:YES];
+    
     [self performSegueWithIdentifier:@"goToCollection" sender:nil];
 
 }
@@ -384,12 +400,13 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
     
     
     [scanAlert dismissWithClickedButtonIndex:0 animated:YES];
+    
     self.bestTagIngredient = bestTag;
     NSLog(@"the best tag is %@", bestTag);
     NSLog(@"top tags: %@", goodTags);
     
     if (found1Tag){
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"YOU JUST TOOK A PICTURE OF A %@", bestTag] message:@"" delegate:self cancelButtonTitle:@"Nope" otherButtonTitles:@"Yup!", nil];
+        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"You took a picture of a(n) %@", bestTag] message:@"" delegate:self cancelButtonTitle:@"Nope" otherButtonTitles:@"Yup!", nil];
         [alert show];
     }else{
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Sorry, I couldn't figure out what that was; go easy on me, I've only been doing this for like a day"] message:nil delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
@@ -535,6 +552,10 @@ titleForHeaderInSection:(NSInteger)section
         
         if ([self.ingredientsList count] > 0){
             [self callRecipesAPIByIngredient];
+            
+            searchAlert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Retrieving Recipes!"] message:@"Busy running some super crazy awesome algorithms, please be patient :)" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+            [searchAlert show];
+            
         }else{
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"No Ingredients!" message:@"Please add some ingredients before you search!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
             alert.alertViewStyle = UIAlertViewStyleDefault;

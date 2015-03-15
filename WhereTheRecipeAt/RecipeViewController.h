@@ -14,7 +14,7 @@
 
 
 @property NSString *detail;
-@property NSString *theTitle;
+
 
 @property NSUInteger pageIndex;
 
