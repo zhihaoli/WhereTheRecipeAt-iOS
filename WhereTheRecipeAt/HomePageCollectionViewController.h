@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "RecipeObject.h"
 
-@interface HomePageCollectionViewController : UICollectionViewController
+@interface HomePageCollectionViewController : UICollectionViewController <NSURLConnectionDataDelegate, NSURLConnectionDelegate>
 
 @property (strong, nonatomic) NSArray *allResults;
 

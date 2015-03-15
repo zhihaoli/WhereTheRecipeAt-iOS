@@ -12,8 +12,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *detailLabel;
 
-@property NSString *title;
+
 @property NSString *detail;
+@property NSString *theTitle;
 
 @property NSUInteger pageIndex;
 

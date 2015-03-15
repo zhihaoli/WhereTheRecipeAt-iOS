@@ -13,5 +13,7 @@
 @property (strong, nonatomic) UIPageViewController *pageViewController;
 @property (strong, nonatomic) NSArray *titles;
 @property (strong, nonatomic) NSArray *details;
+@property (strong, nonatomic) NSArray *ingredients;
+@property (strong, nonatomic) NSMutableArray *otherInfo;
 
 @end

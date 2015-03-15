@@ -17,7 +17,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.titleLabel.text = self.title;
+    self.titleLabel.text = self.theTitle;
     self.detailLabel.text = self.detail;
     // Do any additional setup after loading the view.
 }

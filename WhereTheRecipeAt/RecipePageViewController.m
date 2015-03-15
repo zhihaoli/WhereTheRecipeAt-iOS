@@ -50,7 +50,7 @@
 -(void) setUpData{
 
     //the text for each page of the tutorial
-    self.details = @[@"Control your classroom with SmarTEST. Swipe to learn more!", @"Create and Manage Your Courses", @"Easily bring in your tests from your favorite service", @"Upload your class roster and manage your teams", @"Set up your classroom the way you like it", @"Take full control over the release of your questions", @"Tap on a team to bring up the list of group members", @"Statistics views show the results in a way that makes it easy to see trends", @"View your results team by team", @"When you're done, you can export your results as an Excel file"];
+   // self.details = @[@"Control your classroom with SmarTEST. Swipe to learn more!", @"Create and Manage Your Courses", @"Easily bring in your tests from your favorite service", @"Upload your class roster and manage your teams", @"Set up your classroom the way you like it", @"Take full control over the release of your questions", @"Tap on a team to bring up the list of group members", @"Statistics views show the results in a way that makes it easy to see trends", @"View your results team by team", @"When you're done, you can export your results as an Excel file"];
     
     self.titles = @[@"", @"Tip: Tapping edit allows you to rearrange and delete courses", @"Tip: Use the lock icon to control student access to tests", @"Tip: You can import your class list from a file or manually add or modify them by tapping edit then +", @"Tip: Once you have uploaded a classroom map, you can drag each teams' reporting flag to the correct location", @"Tip: You can control when to release the Application (open ended) Questions, and then lock them when you are done", @"Tip: The list will have a random team member highlighted so you can call on them to explain their choices", @"Tip: You can scroll down to see more detailed information about how teams have answered each question", @"Tip: Tapping on a circle will also bring up that question if you need a reminder", @"If you want to see this again, tap the Tutorial button at the bottom once you've create a course!"];
     
@@ -93,7 +93,7 @@
     
     NSUInteger index = ((RecipeViewController *) viewController).pageIndex;
     index++;
-    if (index == [self.titles count]){
+    if (index == [self.details count]){
         return nil;
     }
     return [self viewControllerAtIndex:index];
@@ -101,12 +101,12 @@
 
 - (RecipeViewController *)viewControllerAtIndex:(NSUInteger) index{
     
-    if (([self.titles count] == 0) || (index >= [self.titles count])){
+    if (([self.details count] == 0) || (index >= [self.details count])){
         return nil;
     }
     
     RecipeViewController *rVC = [self.storyboard instantiateViewControllerWithIdentifier:@"RecipeViewController"];
-    rVC.title = self.titles[index];
+    rVC.theTitle = self.titles[index];
     rVC.detail = self.details[index];
 
     rVC.pageIndex = index;
@@ -115,7 +115,7 @@
 }
 
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController{
-    return [self.titles count];
+    return [self.details count];
 }
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController{

@@ -8,8 +8,12 @@
 
 #import "HomePageCollectionViewController.h"
 #import "RecipeCollectionViewCell.h"
+#import "RecipePageViewController.h"
 
 @interface HomePageCollectionViewController ()
+
+@property (strong, nonatomic) NSMutableData * receivedRecipeData;
+@property (strong, nonatomic) NSMutableArray *directions;
 
 @end
 
@@ -19,6 +23,9 @@ static NSString * const reuseIdentifier = @"RecipeCell";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.directions = [[NSMutableArray alloc]init];
+    
     
     [self.collectionView setBackgroundColor:[UIColor whiteColor]];
      
@@ -106,7 +113,107 @@ static NSString * const reuseIdentifier = @"RecipeCell";
     return cell;
 }
 
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if([segue.identifier isEqualToString:@"goToRecipe"]){
+        NSLog(@"ABOUT TO SEGUE TO RECIPE OMG");
+        
+        RecipePageViewController *pageView = (RecipePageViewController *)[[segue destinationViewController] topViewController];
+        
+        pageView.details = self.directions;
+        
+    }
+}
+
+-(void) recipeDetailsParser:(NSDictionary *) results{
+    
+    NSLog(@"recipe results: %@", results);
+    
+    for (id key in [results allKeys]){
+        if ([key isEqualToString:@"directions"]){
+            
+            self.directions = [results objectForKey:key];
+            
+            
+            break;
+        }
+    }
+    
+    [self performSegueWithIdentifier:@"goToRecipe" sender:nil];
+}
+
 #pragma mark <UICollectionViewDelegate>
+
+- (void)collectionView:(UICollectionView *)collectionView
+didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
+    NSLog(@"DID SELECT ITEM!");
+    
+    RecipeObject *object = [self.allResults objectAtIndex:[indexPath row]];
+    
+    //[self.directions addObject:object.ingredients];
+    
+    [self callAPIWithURL:object.recipeURL];
+    
+    
+}
+
+
+#pragma NSURLConnection Delegates
+
+
+#pragma mark NSURLConnection Delegate Methods
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
+    // A response has been received, this is where we initialize the instance var you created
+    // so that we can append data to it in the didReceiveData method
+    // Furthermore, this method is called each time there is a redirect so reinitializing it
+    // also serves to clear it
+    self.receivedRecipeData = [[NSMutableData alloc] init];
+    NSLog(@"in 2");
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    // Append the new data to the instance variable you declared
+    [self.receivedRecipeData appendData:data];
+    NSLog(@"in 2");
+}
+
+- (NSCachedURLResponse *)connection:(NSURLConnection *)connection
+                  willCacheResponse:(NSCachedURLResponse*)cachedResponse {
+    // Return nil to indicate not necessary to store a cached response for this connection
+    NSLog(@"in 3");
+    return nil;
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    // The request is complete and data has been received
+    NSLog(@"in 4");
+    // You can parse the stuff in your instance variable now
+    
+    //NSLog(@"response is: %@", response);
+    
+    NSError *error = nil;
+    id object = [NSJSONSerialization
+                 JSONObjectWithData:self.receivedRecipeData
+                 options:0
+                 error:&error];
+    
+    NSDictionary *results = object;
+    
+    [self recipeDetailsParser:results];
+}
+
+
+- (void) callAPIWithURL: (NSString *)urlString{
+    NSURL *url = [NSURL URLWithString:urlString];
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:url];
+    [request setHTTPShouldHandleCookies:NO];
+    [request setValue:@"Agent name goes here" forHTTPHeaderField:@"User-Agent"];
+    [NSURLConnection connectionWithRequest:request delegate:self];
+}
+
 
 /*
 // Uncomment this method to specify if the specified item should be highlighted during tracking
