@@ -19,13 +19,14 @@
 @property (strong, nonatomic) NSMutableData *receivedData;
 @property (strong, nonatomic) NSMutableArray *allRecipes;
 @property (strong, nonatomic) NSMutableArray *ingredientsList;
+@property (strong, nonatomic) NSString *bestTagIngredient;
 
 
 @end
 
 @implementation HomePageTableViewController
 
-
+UIAlertView * scanAlert;
 
 
 - (void)viewDidLoad {
@@ -104,9 +105,13 @@
 clickedButtonAtIndex:(NSInteger)buttonIndex{
     
     
-    if (buttonIndex == 1){
+    if (buttonIndex == 1 && [alertView.title isEqualToString:@"Add an ingredient"]){
         NSLog(@"ADDING! %@", [[alertView textFieldAtIndex:0]text]);
         [self.ingredientsList addObject:[[alertView textFieldAtIndex:0]text]];
+        [self.tableView reloadData];
+    }else if (buttonIndex == 1){
+        NSLog(@"ADDING THE BEST TAG: %@", self.bestTagIngredient);
+        [self.ingredientsList addObject:self.bestTagIngredient];
         [self.tableView reloadData];
     }
 }
@@ -319,10 +324,12 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 -(void) parseImageRecogData: (NSDictionary *) recogData{
     
     BOOL found1Tag = NO;
-    BOOL found2Tags = NO;
+ 
           NSMutableArray *goodTags = [[NSMutableArray alloc]init];
     NSString *bestTag;
-    NSString *secondBestTag;
+
+    
+    int tagCount = 0;
     for (id key in [recogData allKeys]) {
         if ([key isEqualToString:@"results"]){
             
@@ -343,7 +350,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
                 
                         int confidence = (int)[tagDict objectForKey:@"confidence"];
                 
-                        if ( confidence > 30){
+                        if ( confidence > 30 && tagCount <5){
                             if (![self checkIfTagIsAFood:[tagDict objectForKey:@"tag"]]){
                         
                                 NSLog(@"%@ is a bad tag!", [tagDict objectForKey:@"tag"]);
@@ -351,6 +358,8 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
                             }else{
                                 [goodTags addObject:[tagDict objectForKey:@"tag"]];
                             }
+                            
+                            tagCount++;
                 }
                 
                 
@@ -358,17 +367,14 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
                 
                 
             }
-                    if ([goodTags count] > 1){
-                        secondBestTag = [goodTags objectAtIndex:1];
-                    }
-                    
+                
                     if ([goodTags count] > 0){
                         bestTag = [goodTags objectAtIndex:0];
                         found1Tag = YES;
-                        found2Tags = YES;
+                
                     }else{
                         found1Tag = NO;
-                        found2Tags = NO;
+                   
                         bestTag = @"... actually I'm not sure what that was, maybe enter it manually?";
                     }
             
@@ -377,14 +383,13 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
     }
     
     
+    [scanAlert dismissWithClickedButtonIndex:0 animated:YES];
+    self.bestTagIngredient = bestTag;
     NSLog(@"the best tag is %@", bestTag);
     NSLog(@"top tags: %@", goodTags);
     
     if (found1Tag){
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"YOU JUST TOOK A PICTURE OF A %@", bestTag] message:@"" delegate:self cancelButtonTitle:@"Nope" otherButtonTitles:@"Yup!", nil];
-        [alert show];
-    }else if (found2Tags){
-        UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"YOU JUST TOOK A PICTURE OF A %@, OR WAS IT %@?", bestTag, secondBestTag] message:@"" delegate:self cancelButtonTitle:@"Neither" otherButtonTitles:bestTag,secondBestTag , nil];
         [alert show];
     }else{
         UIAlertView * alert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Sorry, I couldn't figure out what that was; go easy on me, I've only been doing this for like a day"] message:nil delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
@@ -562,7 +567,17 @@ titleForHeaderInSection:(NSInteger)section
     
     // NSURL *strImageURL = [info valueForKey:UIImagePickerControllerReferenceURL];
     
+    
+    
+    
+    
     [self storeImageToParse:cameraImage];
+    
+    
+    scanAlert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Scanning the picture!"] message:@"Busy running some super crazy awesome algorithms, please be patient :)" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
+    [scanAlert show];
+    
+    
     
     [self dismissViewControllerAnimated:YES completion:nil];
     return;
@@ -587,6 +602,8 @@ titleForHeaderInSection:(NSInteger)section
                     success:^(AFHTTPRequestOperation *taggingOperation, id taggingResponseObject) {
                         NSLog(@"Tagging Response: %@", taggingResponseObject);
                         
+                        
+                      
                         
 //                        NSError *error = nil;
 //                        id object = [NSJSONSerialization

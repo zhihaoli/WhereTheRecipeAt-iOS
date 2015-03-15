@@ -34,6 +34,8 @@
 		2ABC01611AB4EB5300FDA6C5 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ABC01591AB4EB5300FDA6C5 /* StoreKit.framework */; };
 		2ABC01631AB4ECF300FDA6C5 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ABC01621AB4ECF300FDA6C5 /* Social.framework */; };
 		2ABC01651AB4ECFE00FDA6C5 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2ABC01641AB4ECFE00FDA6C5 /* Accounts.framework */; };
+		2ABC01681AB56CA200FDA6C5 /* RecipeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABC01671AB56CA200FDA6C5 /* RecipeViewController.m */; };
+		2ABC016B1AB56DCC00FDA6C5 /* RecipePageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2ABC016A1AB56DCC00FDA6C5 /* RecipePageViewController.m */; };
 		E93B3362145D1EF2E78A8786 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E25C8EB8B525324947DA835 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -86,6 +88,10 @@
 		2ABC01591AB4EB5300FDA6C5 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		2ABC01621AB4ECF300FDA6C5 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		2ABC01641AB4ECFE00FDA6C5 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		2ABC01661AB56CA200FDA6C5 /* RecipeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecipeViewController.h; sourceTree = "<group>"; };
+		2ABC01671AB56CA200FDA6C5 /* RecipeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecipeViewController.m; sourceTree = "<group>"; };
+		2ABC01691AB56DCC00FDA6C5 /* RecipePageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecipePageViewController.h; sourceTree = "<group>"; };
+		2ABC016A1AB56DCC00FDA6C5 /* RecipePageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecipePageViewController.m; sourceTree = "<group>"; };
 		87C4F3D20F3707E261CDFC45 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		8E25C8EB8B525324947DA835 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0C841C0E4A777468FB86F0D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
@@ -161,6 +167,10 @@
 				2A9FA2211AB3F50A005F191A /* ViewController.h */,
 				2A9FA2221AB3F50A005F191A /* ViewController.m */,
 				2A9FA2241AB3F50A005F191A /* Main.storyboard */,
+				2ABC01691AB56DCC00FDA6C5 /* RecipePageViewController.h */,
+				2ABC016A1AB56DCC00FDA6C5 /* RecipePageViewController.m */,
+				2ABC01661AB56CA200FDA6C5 /* RecipeViewController.h */,
+				2ABC01671AB56CA200FDA6C5 /* RecipeViewController.m */,
 				2A8C5EC51AB48C350094EE83 /* HomePageCollectionViewController.h */,
 				2A8C5EC61AB48C350094EE83 /* HomePageCollectionViewController.m */,
 				2A8C5EC81AB4956D0094EE83 /* RecipeCollectionViewCell.h */,
@@ -364,7 +374,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2A8C5EC21AB487A30094EE83 /* RecipeDetails.m in Sources */,
+				2ABC016B1AB56DCC00FDA6C5 /* RecipePageViewController.m in Sources */,
 				2A9FA2231AB3F50A005F191A /* ViewController.m in Sources */,
+				2ABC01681AB56CA200FDA6C5 /* RecipeViewController.m in Sources */,
 				2AAD22581AB401C0001DAB82 /* HomePageTableViewController.m in Sources */,
 				2A9FA2201AB3F50A005F191A /* AppDelegate.m in Sources */,
 				2A8C5ECA1AB4956D0094EE83 /* RecipeCollectionViewCell.m in Sources */,
