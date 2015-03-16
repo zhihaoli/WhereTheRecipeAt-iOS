@@ -258,6 +258,9 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
 
 - (void) parseRecipeData: (NSDictionary *) results{
     
+    self.allRecipes = [[NSMutableArray alloc]init];
+    
+    
     for (id key in [results allKeys]) {
         
         
@@ -330,7 +333,7 @@ clickedButtonAtIndex:(NSInteger)buttonIndex{
         }
     }
     
-    [searchAlert dismissWithClickedButtonIndex:0 animated:YES];
+    
     
     [self performSegueWithIdentifier:@"goToCollection" sender:nil];
 
@@ -506,6 +509,7 @@ titleForHeaderInSection:(NSInteger)section
         
         collectionView.allResults = self.allRecipes;
         
+        [searchAlert dismissWithClickedButtonIndex:0 animated:YES];
         
     }
 }
@@ -551,10 +555,13 @@ titleForHeaderInSection:(NSInteger)section
     if (indexPath.section == 1){
         
         if ([self.ingredientsList count] > 0){
-            [self callRecipesAPIByIngredient];
             
             searchAlert = [[UIAlertView alloc] initWithTitle:[NSString stringWithFormat:@"Retrieving Recipes!"] message:@"Busy running some super crazy awesome algorithms, please be patient :)" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles: nil];
             [searchAlert show];
+            
+            [self callRecipesAPIByIngredient];
+            
+            
             
         }else{
             UIAlertView * alert = [[UIAlertView alloc] initWithTitle:@"No Ingredients!" message:@"Please add some ingredients before you search!" delegate:self cancelButtonTitle:@"Okay" otherButtonTitles:nil];
